@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const initialState = {
   full_name: '',
@@ -62,16 +63,47 @@ export default function BookingForm() {
   return (
     <section id="book" className="py-10">
       <div className="max-w-3xl mx-auto px-4">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-gray-900">Book a discovery call</h2>
-          <p className="text-gray-600 mt-1">Tell us about your hiring needs. We'll confirm within 24 hours.</p>
+        <motion.div
+          className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8 overflow-hidden"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2 className="text-2xl font-bold text-gray-900" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            Book a discovery call
+          </motion.h2>
+          <motion.p className="text-gray-600 mt-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+            Tell us about your hiring needs. We'll confirm within 24 hours.
+          </motion.p>
 
-          {success && (
-            <div className="mt-4 p-3 rounded bg-green-50 text-green-700 border border-green-200">{success}</div>
-          )}
-          {error && (
-            <div className="mt-4 p-3 rounded bg-red-50 text-red-700 border border-red-200">{error}</div>
-          )}
+          <AnimatePresence>
+            {success && (
+              <motion.div
+                key="success"
+                className="mt-4 p-3 rounded bg-green-50 text-green-700 border border-green-200"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+              >
+                {success}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                key="error"
+                className="mt-4 p-3 rounded bg-red-50 text-red-700 border border-red-200"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+              >
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -130,12 +162,29 @@ export default function BookingForm() {
 
             <div className="md:col-span-2 flex items-center justify-between gap-4">
               <p className="text-sm text-gray-500">By submitting, you agree to be contacted by Choose Marketers.</p>
-              <button disabled={loading} type="submit" className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-5 py-2.5 rounded-md">
+              <motion.button
+                disabled={loading}
+                type="submit"
+                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-5 py-2.5 rounded-md shadow"
+                whileHover={!loading ? { y: -2 } : {}}
+                whileTap={{ y: 0 }}
+              >
                 {loading ? 'Submitting...' : 'Submit request'}
-              </button>
+              </motion.button>
             </div>
           </form>
-        </div>
+
+          {/* Decorative gradient bars */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute -z-10 inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <div className="absolute -top-20 -right-24 h-56 w-56 rounded-full bg-indigo-200/40 blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-blue-200/40 blur-3xl" />
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   )
